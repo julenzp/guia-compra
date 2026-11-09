@@ -49,6 +49,8 @@ h3{font-size:14px;margin:16px 0 6px;font-weight:600}
 .chip{font-size:12px;padding:3px 8px;border-radius:8px}
 .chip.ok{background:var(--okbg);color:var(--ok)}.chip.wa{background:var(--wabg);color:var(--wa)}.chip.ko{background:var(--kobg);color:var(--ko)}.chip.ne{background:var(--acbg);color:var(--ac)}
 .small{font-size:13px;color:var(--tx2)}
+.tip{margin-top:14px;padding:10px 12px;border-radius:10px;background:var(--acbg);color:var(--ac);font-size:14px}
+.tip b{display:block;font-weight:600;margin-bottom:2px}
 .pr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .pr div.b{border:1px solid var(--bd);border-radius:10px;padding:8px 10px}
 .pr div.b.best{border-color:var(--okfill);background:var(--okbg);color:var(--ok)}
@@ -105,6 +107,17 @@ function estGrade(n){
   const pos=Math.min(5,Math.floor((n.fiber_100g||0)/0.9))+Math.min(5,Math.floor((n.proteins_100g||0)/1.6));
   const s=neg-pos;
   return s<=-1?'a':s<=2?'b':s<=10?'c':s<=18?'d':'e';
+}
+function tips(p,sc){
+  const n=p.nutriments||{}, t=[];
+  if(n.sugars_100g>12)t.push('Busca una versión con menos azúcar o sin azúcares añadidos.');
+  if(n.salt_100g>1.5)t.push('Elige otra con menos sal.');
+  if(n['saturated-fat_100g']>5)t.push('Prueba una con menos grasa saturada.');
+  if((p.ingredients_analysis_tags||[]).includes('en:palm-oil'))t.push('Prefiere una sin aceite de palma.');
+  if((p.additives_n||0)>=3)t.push('Elige una con menos aditivos.');
+  if(p.nova_group==4)t.push('Busca una con lista de ingredientes más corta y sencilla.');
+  if(t.length)return t.slice(0,2);
+  return [sc.total>=70?'Buena elección dentro de su tipo. Puedes repetir.':'Sin un punto débil claro. Compárala con otras del mismo tipo.'];
 }
 function score(p){
   const n=p.nutriments||{}, parts=[];
@@ -166,6 +179,7 @@ function render(p,sc,rank){
   if(!sc.complete) h+='<p class="small">Nota con datos incompletos: faltan algunos criterios en la base.</p>';
   h+='<h3>Por qué esta nota</h3>';
   sc.parts.forEach(x=>{const pc=Math.round(x.v/x.max*100),t=tone(pc);h+='<div class="bar"><span class="l">'+x.k+'</span><div class="t"><i style="width:'+pc+'%;background:var(--'+({ok:'okfill',wa:'wafill',ko:'kofill'}[t])+')"></i></div><span class="n">'+x.v+'/'+x.max+'</span></div><p class="why">'+esc(x.why)+'</p>'});
+  h+='<div class="tip"><b>Para comprar mejor</b>'+tips(p,sc).map(x=>'<div>'+esc(x)+'</div>').join('')+'</div>';
   h+='<h3>Características</h3><div class="chips">';
   let ns=String(p.nutrition_grades||'').toLowerCase();
   if(!/^[a-e]$/.test(ns))ns=estGrade(p.nutriments||{});
