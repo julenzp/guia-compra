@@ -49,6 +49,10 @@ h3{font-size:14px;margin:16px 0 6px;font-weight:600}
 .chip{font-size:12px;padding:3px 8px;border-radius:8px}
 .chip.ok{background:var(--okbg);color:var(--ok)}.chip.wa{background:var(--wabg);color:var(--wa)}.chip.ko{background:var(--kobg);color:var(--ko)}.chip.ne{background:var(--acbg);color:var(--ac)}
 .small{font-size:13px;color:var(--tx2)}
+textarea{width:100%;min-height:70px;padding:10px;font:14px/1.4 inherit;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx)}
+.fl{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--bd);font-size:14px}
+.fl:last-child{border-bottom:0}
+.fl .chip{flex:none;margin-top:1px}
 .tip{margin-top:14px;padding:10px 12px;border-radius:10px;background:var(--acbg);color:var(--ac);font-size:14px}
 .tip b{display:block;font-weight:600;margin-bottom:2px}
 .pr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -75,6 +79,8 @@ h3{font-size:14px;margin:16px 0 6px;font-weight:600}
 
 <section id="v1">
   <div class="card">
+    <div class="tabs" style="margin:0 0 10px"><button class="tab on" id="m1">Alimentación</button><button class="tab" id="m2">Otro producto</button></div>
+    <p class="small" id="hint" style="margin:0 0 10px">Escanea un alimento y mira su nota.</p>
     <button class="big" id="scan">Escanear código de barras</button>
     <div id="reader" class="hide"></div>
     <button class="sec hide" id="stop" style="margin-top:10px;width:100%">Cerrar cámara</button>
@@ -201,10 +207,11 @@ function render(p,sc,rank){
 async function lookup(code){
   code=String(code).replace(/\D/g,'');
   if(!code){$('#out').innerHTML='<div class="msg">Escribe el número del código de barras.</div>';return}
+  if(mode==='other')return lookupOther(code);
   $('#out').innerHTML='<div class="card small">Buscando…</div>';
   let p;
   try{p=await getProduct(code)}catch(e){$('#out').innerHTML='<div class="msg">No he podido conectar con la base de datos. Revisa tu conexión y vuelve a intentarlo.</div>';return}
-  if(!p){$('#out').innerHTML='<div class="card"><div class="msg">No encuentro este código en la base. Puede ser que aún no esté. Mándame una foto de la etiqueta y lo leo yo.</div></div>';return}
+  if(!p){$('#out').innerHTML='<div class="card"><div class="msg">No encuentro este código entre los alimentos. Si no es comida, prueba como otro producto. Si lo es, mándame una foto de la etiqueta en el chat y la leo yo.</div><button class="sec" style="margin-top:10px;width:100%" onclick="setMode(\'other\');lookupOther(\''+code+'\')">Probar como otro producto</button></div>';return}
   p.code=p.code||code;
   const sc=score(p);
   render(p,sc);
@@ -239,6 +246,74 @@ async function alternatives(p,sc){
   }catch(e){if($('#alts'))$('#alts').innerHTML='<p class="small">No he podido comparar con su categoría ahora.</p>'}
 }
 
+let mode='food';
+function setMode(m){
+  mode=m;$('#m1').classList.toggle('on',m==='food');$('#m2').classList.toggle('on',m==='other');
+  $('#hint').textContent=m==='food'?'Escanea un alimento y mira su nota.':'Para higiene, limpieza y otros productos. Sin estrellas: solo una orientación breve.';
+  $('#out').innerHTML='';
+}
+const RULES=[
+  {lvl:'ko',t:'Isotiazolinonas',re:/methylisothiazolinone|methylchloroisothiazolinone/,d:'Conservante que causa alergia de contacto con frecuencia.',tip:'Evita las que llevan isotiazolinonas.'},
+  {lvl:'ko',t:'Liberadores de formaldehído',re:/dmdm hydantoin|imidazolidinyl urea|diazolidinyl urea|quaternium-15|bronopol/,d:'Conservantes que pueden irritar y sensibilizar la piel.',tip:'Busca otra sin conservantes liberadores de formaldehído.'},
+  {lvl:'ko',t:'Perfume',re:/parfum|fragrance/,d:'Causa frecuente de irritación y alergia.',tip:'Busca una versión sin perfume.'},
+  {lvl:'wa',t:'Alérgenos del perfume',re:/limonene|linalool|hexyl cinnamal|benzyl salicylate|citronellol|geraniol|eugenol|coumarin|citral|amyl cinnamal|benzyl benzoate|butylphenyl methylpropional/,d:'Sustancias del perfume que la UE obliga a declarar.'},
+  {lvl:'wa',t:'Parabenos',re:/paraben/,d:'Conservantes discutidos; permitidos en la UE con límites.',tip:'Si prefieres evitarlos, elige una sin parabenos.'},
+  {lvl:'wa',t:'Sulfatos',re:/sodium lauryl sulfate|sodium laureth sulfate|ammonium lauryl sulfate|ammonium laureth sulfate/,d:'Limpian fuerte y pueden resecar. Cuestión de preferencia.',tip:'Con piel sensible, prueba una sin sulfatos.'},
+  {lvl:'wa',t:'Siliconas',re:/dimethicone|methicone|silicone|siloxane/,d:'Dan brillo y suavidad, pero se acumulan. Cuestión de preferencia.'},
+  {lvl:'wa',t:'Microplásticos',re:/polyethylene|acrylates copolymer|nylon-12|polymethyl methacrylate/,d:'Plásticos diminutos que acaban en el agua.',tip:'Elige una sin microplásticos.'}
+];
+function analizaIng(text){
+  const s=String(text).toLowerCase().replace(/\s+/g,' ');
+  const flags=RULES.filter(r=>r.re.test(s));
+  const n=s.split(',').filter(x=>x.trim()).length;
+  const out=flags.map(r=>({lvl:r.lvl,t:r.t,d:r.d}));
+  const tips=flags.filter(r=>r.tip).map(r=>r.tip);
+  if(n>=25){out.push({lvl:'wa',t:'Lista larga',d:n+' ingredientes.'});tips.push('Elige una con la lista más corta.')}
+  else if(n>0&&n<=12)out.push({lvl:'ok',t:'Lista corta',d:'Solo '+n+' ingredientes.'});
+  if(!flags.length)out.unshift({lvl:'ok',t:'Sin avisos',d:'Ninguno de los ingredientes que reviso.'});
+  return {flags:out,tips:tips.slice(0,2)};
+}
+async function lookupOther(code){
+  $('#out').innerHTML='<div class="card small">Buscando…</div>';
+  let p=null,ok=false;
+  for(const d of ['openbeautyfacts','openproductsfacts']){
+    try{const j=await getJSON('https://world.'+d+'.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields=code,product_name,brands,quantity,ingredients_text,image_front_small_url');ok=true;if(j.status===1){p=j.product;break}}catch(e){}
+  }
+  if(!ok){$('#out').innerHTML='<div class="msg">No he podido conectar con la base de datos. Revisa tu conexión y vuelve a intentarlo.</div>';return}
+  if(!p)p={code:code,missing:true};
+  p.code=p.code||code;
+  renderOther(p);
+}
+function renderOther(p){
+  window.curO=p;
+  const name=p.product_name||'Producto sin identificar', br=(p.brands||'').split(',')[0];
+  let h='<div class="card"><div class="row">'+(p.image_front_small_url?'<img src="'+esc(p.image_front_small_url)+'" style="width:64px;height:64px;object-fit:contain;border-radius:8px;background:#fff">':'')+'<div><div style="font-weight:600;font-size:18px">'+esc(name)+'</div><div class="small">'+esc(br)+(p.quantity?' · '+esc(p.quantity):'')+'</div><div class="small">'+esc(p.code)+'</div></div></div>';
+  if(p.missing&&!p.ingredients_text){
+    h+='<div class="msg" style="margin-top:12px">No encuentro este producto en las bases abiertas. Hazle una foto al producto y a la lista de ingredientes y mándamela en el chat: lo identifico y te oriento.</div>';
+  }else if(p.ingredients_text){
+    const a=analizaIng(p.ingredients_text);
+    h+='<h3>Ingredientes a mirar</h3>'+a.flags.map(f=>'<div class="fl"><span class="chip '+f.lvl+'">'+esc(f.t)+'</span><span class="small">'+esc(f.d)+'</span></div>').join('');
+    if(a.tips.length)h+='<div class="tip"><b>Para comprar mejor</b>'+a.tips.map(x=>'<div>'+esc(x)+'</div>').join('')+'</div>';
+    h+='<p class="small" style="margin-top:10px">Orientación sobre ingredientes, no consejo médico. Si tienes alergias o piel sensible, consúltalo con tu médico.</p>';
+  }else{
+    h+='<div class="msg" style="margin-top:12px">Está en la base pero sin lista de ingredientes. Pégala abajo, o mándame la foto en el chat.</div>';
+  }
+  h+='<h3>¿Tienes la lista de ingredientes?</h3><p class="small" style="margin:0 0 6px">Haz una foto a la lista, mantén el dedo sobre el texto para copiarlo y pégalo aquí.</p><textarea id="pasteing" placeholder="AQUA, SODIUM LAURETH SULFATE, PARFUM…"></textarea><div class="row" style="margin-top:8px"><button class="sec" style="flex:1" onclick="analizaPegado()">Analizar ingredientes</button><button class="sec" style="flex:1" id="cpy" onclick="copyConsult()">Copiar para consultar</button></div></div>';
+  $('#out').innerHTML=h;
+}
+function analizaPegado(){
+  const t=$('#pasteing').value.trim();
+  if(!t)return;
+  curO.ingredients_text=t;curO.missing=false;renderOther(curO);
+}
+function copyConsult(){
+  const p=window.curO||{};
+  const t='Consulta de producto: '+(p.product_name||'sin nombre')+(p.brands?' ('+p.brands.split(',')[0]+')':'')+', código '+p.code+'.'+(p.ingredients_text?' Ingredientes: '+p.ingredients_text+'.':'')+' ¿Qué me aconsejas? Si hace falta te mando la foto.';
+  const done=()=>{const b=$('#cpy');if(b){b.textContent='Copiado. Pégalo en el chat';setTimeout(()=>{b.textContent='Copiar para consultar'},2500)}};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,()=>{window.prompt('Copia este texto:',t)});
+  else window.prompt('Copia este texto:',t);
+}
+$('#m1').onclick=()=>setMode('food');$('#m2').onclick=()=>setMode('other');
 let qr=null;
 async function startScan(){
   $('#reader').classList.remove('hide');$('#stop').classList.remove('hide');
