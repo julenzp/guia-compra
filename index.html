@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Guía de compra">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#185fa5">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Guía de compra</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--tx:#1f1f1c;--tx2:#5f5e5a;--tx3:#8a8983;--bd:#e3e1d9;--ac:#185fa5;--acbg:#e6f1fb;--ok:#27500a;--okbg:#eaf3de;--okfill:#639922;--wa:#633806;--wabg:#faeeda;--wafill:#ba7517;--ko:#791f1f;--kobg:#fcebeb;--kofill:#e24b4a;--star:#ba7517}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161614;--card:#222220;--tx:#f1efe8;--tx2:#b4b2a9;--tx3:#888780;--bd:#3a3a36;--ac:#85b7eb;--acbg:#0c447c;--ok:#c0dd97;--okbg:#27500a;--okfill:#97c459;--wa:#fac775;--wabg:#633806;--wafill:#ef9f27;--ko:#f7c1c1;--kobg:#791f1f;--kofill:#f09595;--star:#ef9f27}}
+:root[data-theme="dark"]{--bg:#161614;--card:#222220;--tx:#f1efe8;--tx2:#b4b2a9;--tx3:#888780;--bd:#3a3a36;--ac:#85b7eb;--acbg:#0c447c;--ok:#c0dd97;--okbg:#27500a;--okfill:#97c459;--wa:#fac775;--wabg:#633806;--wafill:#ef9f27;--ko:#f7c1c1;--kobg:#791f1f;--kofill:#f09595;--star:#ef9f27}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 -apple-system,system-ui,sans-serif;padding:0 16px calc(24px + env(safe-area-inset-bottom))}
+header{padding:calc(14px + env(safe-area-inset-top)) 0 8px}
+h1{font-size:22px;font-weight:600;margin:0}
+.sub{color:var(--tx2);font-size:14px;margin:0}
+.tabs{display:flex;gap:8px;margin:12px 0}
+.tab{flex:1;padding:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font-size:15px}
+.tab.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+@media (prefers-color-scheme:dark){.tab.on{color:#0b0b0b}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin:12px 0}
+button.big{width:100%;padding:14px;font-size:17px;border-radius:12px;border:0;background:var(--ac);color:#fff;font-weight:600}
+@media (prefers-color-scheme:dark){button.big{color:#0b0b0b}}
+button.sec{padding:10px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:15px}
+input{width:100%;padding:12px;font-size:16px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx)}
+.row{display:flex;gap:8px;align-items:center}
+#reader{width:100%;border-radius:12px;overflow:hidden;margin-top:10px}
+.stars{font-size:26px;letter-spacing:2px;line-height:1}
+.star{display:inline-block;color:var(--bd)}
+.star.f{color:var(--star)}
+.star.h{background:linear-gradient(90deg,var(--star) 50%,var(--bd) 50%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.nota{border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px}
+.nota.ok{background:var(--okbg);color:var(--ok)}.nota.wa{background:var(--wabg);color:var(--wa)}.nota.ko{background:var(--kobg);color:var(--ko)}
+.nota b{font-size:30px;line-height:1}
+.nota small{margin-left:auto;text-align:right;font-size:13px}
+h3{font-size:14px;margin:16px 0 6px;font-weight:600}
+.bar{display:flex;gap:8px;align-items:center;font-size:13px;margin:6px 0}
+.bar span.l{width:96px;color:var(--tx2)}
+.bar .t{flex:1;height:7px;background:var(--bg);border-radius:4px}
+.bar .t i{display:block;height:7px;border-radius:4px}
+.bar .n{width:42px;text-align:right}
+.why{font-size:12px;color:var(--tx3);margin:0 0 4px 104px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;padding:3px 8px;border-radius:8px}
+.chip.ok{background:var(--okbg);color:var(--ok)}.chip.wa{background:var(--wabg);color:var(--wa)}.chip.ko{background:var(--kobg);color:var(--ko)}.chip.ne{background:var(--acbg);color:var(--ac)}
+.small{font-size:13px;color:var(--tx2)}
+.pr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pr div.b{border:1px solid var(--bd);border-radius:10px;padding:8px 10px}
+.pr div.b.best{border-color:var(--okfill);background:var(--okbg);color:var(--ok)}
+.pr label{font-size:12px;color:var(--tx2);display:block}
+.alt,.hist{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd);font-size:14px}
+.alt:last-child,.hist:last-child{border-bottom:0}
+.alt .nm,.hist .nm{flex:1;min-width:0}
+.alt .nm b,.hist .nm b{display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msg{padding:12px;border-radius:10px;background:var(--wabg);color:var(--wa);font-size:14px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>Guía de compra</h1>
+  <p class="sub">Escanea un alimento y mira su nota</p>
+</header>
+<div class="tabs">
+  <button class="tab on" id="t1">Escanear</button>
+  <button class="tab" id="t2">Mis productos</button>
+</div>
+
+<section id="v1">
+  <div class="card">
+    <button class="big" id="scan">Escanear código de barras</button>
+    <div id="reader" class="hide"></div>
+    <button class="sec hide" id="stop" style="margin-top:10px;width:100%">Cerrar cámara</button>
+    <p class="small" style="margin:12px 0 6px">O escribe el número que hay bajo las rayas</p>
+    <div class="row">
+      <input id="code" inputmode="numeric" placeholder="8480000123456" autocomplete="off">
+      <button class="sec" id="go">Buscar</button>
+    </div>
+  </div>
+  <div id="out"></div>
+</section>
+
+<section id="v2" class="hide">
+  <div class="card" id="histbox"></div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const st={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const r1=x=>Math.round(x*10)/10;
+const FIELDS='code,product_name,brands,quantity,product_quantity,nutrition_grades,nova_group,nutriments,additives_n,ingredients_analysis_tags,ingredients_text,categories_tags,allergens_tags,image_front_small_url';
+
+function estGrade(n){
+  if(n['energy-kcal_100g']==null||n.sugars_100g==null||n.salt_100g==null||n['saturated-fat_100g']==null)return '';
+  const pts=(v,step,max)=>Math.min(max,Math.max(0,Math.ceil(v/step)-1+(v>0&&v%step===0?0:0)));
+  const kj=n['energy-kcal_100g']*4.184, na=n.salt_100g*400;
+  const neg=Math.min(10,Math.floor(kj/335))+Math.min(10,Math.floor(n.sugars_100g/4.5))+Math.min(10,Math.floor(n['saturated-fat_100g']))+Math.min(10,Math.floor(na/90));
+  const pos=Math.min(5,Math.floor((n.fiber_100g||0)/0.9))+Math.min(5,Math.floor((n.proteins_100g||0)/1.6));
+  const s=neg-pos;
+  return s<=-1?'a':s<=2?'b':s<=10?'c':s<=18?'d':'e';
+}
+function score(p){
+  const n=p.nutriments||{}, parts=[];
+  let ns=String(p.nutrition_grades||'').toLowerCase(), est=false;
+  if(!/^[a-e]$/.test(ns)){ns=estGrade(n);est=true}
+  const nsMap={a:40,b:32,c:22,d:12,e:4};
+  if(ns&&nsMap[ns]!==undefined) parts.push({k:'Nutrición',v:nsMap[ns],max:40,why:(est?'Nutri-Score estimado ':'Nutri-Score ')+ns.toUpperCase()});
+  const nvMap={1:25,2:20,3:12,4:3};
+  if(nvMap[p.nova_group]!==undefined) parts.push({k:'Procesado',v:nvMap[p.nova_group],max:25,why:'Grupo NOVA '+p.nova_group+' de 4'});
+  if(p.ingredients_text){
+    let v=20; const w=[];
+    const add=p.additives_n||0;
+    if(add){v-=Math.min(10,add*2);w.push(add+(add==1?' aditivo':' aditivos'))}
+    if((p.ingredients_analysis_tags||[]).includes('en:palm-oil')){v-=5;w.push('aceite de palma')}
+    if(n.sugars_100g>12){v-=5;w.push('azúcares '+r1(n.sugars_100g)+' g/100 g')}
+    parts.push({k:'Ingredientes',v:Math.max(0,v),max:20,why:w.length?w.join(', '):'sin puntos negativos'});
+  }
+  if(!parts.length) return null;
+  const sv=parts.reduce((a,b)=>a+b.v,0), sm=parts.reduce((a,b)=>a+b.max,0);
+  const total=Math.round(sv/sm*100);
+  return {parts,total,stars:Math.round(total/100*5*2)/2,complete:parts.length==3};
+}
+function starsHtml(s){let h='';for(let i=1;i<=5;i++){h+='<span class="star '+(s>=i?'f':s>=i-0.5?'h':'')+'">★</span>'}return h}
+function tone(t){return t>=70?'ok':t>=45?'wa':'ko'}
+
+async function getJSON(u,ms){
+  const c=new AbortController(),t=setTimeout(()=>c.abort(),ms||8000);
+  try{const r=await fetch(u,{signal:c.signal});if(!r.ok)throw new Error('http '+r.status);return await r.json()}finally{clearTimeout(t)}
+}
+async function getProduct(code){
+  const j=await getJSON('https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields='+FIELDS);
+  return j.status===1?j.product:null;
+}
+
+function priceBox(p){
+  const all=st.get('prices',{}), pr=all[p.code]||{};
+  const q=Number(p.product_quantity)||0;
+  const kg=v=>(q&&v)?(v/(q/1000)):null;
+  const bm=kg(pr.bm), dia=kg(pr.dia);
+  const best=(bm&&dia)?(bm<dia?'bm':dia<bm?'dia':''):'';
+  const box=(id,name,val,per)=>'<div class="b '+(best===id?'best':'')+'"><label>'+name+(best===id?' · más barato':'')+'</label><input id="p_'+id+'" inputmode="decimal" placeholder="€" value="'+esc(val||'')+'" onchange="savePrice(\''+p.code+'\')"><div class="small">'+(per?r1(per*100)/100+' €/kg':(q?'':'sin tamaño'))+'</div></div>';
+  return '<h3>Precio</h3><div class="pr">'+box('bm','BM',pr.bm,bm)+box('dia','DIA',pr.dia,dia)+'</div><p class="small">Escribe lo que cuesta en cada tienda. Se guarda en tu móvil.</p>';
+}
+function savePrice(code){
+  const all=st.get('prices',{});
+  const f=id=>parseFloat(String(document.getElementById('p_'+id).value).replace(',','.'))||0;
+  all[code]={bm:f('bm'),dia:f('dia')};
+  st.set('prices',all);
+  if(window.cur&&cur.code===code) render(cur);
+}
+
+function render(p,sc,rank){
+  window.cur=p; sc=sc||score(p);
+  const name=p.product_name||'Sin nombre', br=(p.brands||'').split(',')[0];
+  let h='<div class="card">';
+  h+='<div class="row">'+(p.image_front_small_url?'<img src="'+esc(p.image_front_small_url)+'" style="width:64px;height:64px;object-fit:contain;border-radius:8px;background:#fff">':'')+'<div><div style="font-weight:600;font-size:18px">'+esc(name)+'</div><div class="small">'+esc(br)+(p.quantity?' · '+esc(p.quantity):'')+'</div><div class="small">'+esc(p.code)+'</div></div></div>';
+  if(!sc){h+='<div class="msg" style="margin-top:12px">Este producto está en la base, pero sin datos suficientes para ponerle nota. Puedo orientarte si me mandas una foto de la etiqueta.</div></div>';$('#out').innerHTML=h;return}
+  h+='<div class="nota '+tone(sc.total)+'" style="margin-top:12px"><b>'+r1(sc.stars)+'</b><div class="stars">'+starsHtml(sc.stars)+'</div><small>'+(rank?'mejor que '+rank.better+' de '+rank.total+'<br>de su categoría':'nota sobre 5')+'</small></div>';
+  if(!sc.complete) h+='<p class="small">Nota con datos incompletos: faltan algunos criterios en la base.</p>';
+  h+='<h3>Por qué esta nota</h3>';
+  sc.parts.forEach(x=>{const pc=Math.round(x.v/x.max*100),t=tone(pc);h+='<div class="bar"><span class="l">'+x.k+'</span><div class="t"><i style="width:'+pc+'%;background:var(--'+({ok:'okfill',wa:'wafill',ko:'kofill'}[t])+')"></i></div><span class="n">'+x.v+'/'+x.max+'</span></div><p class="why">'+esc(x.why)+'</p>'});
+  h+='<h3>Características</h3><div class="chips">';
+  let ns=String(p.nutrition_grades||'').toLowerCase();
+  if(!/^[a-e]$/.test(ns))ns=estGrade(p.nutriments||{});
+  if(ns)h+='<span class="chip '+(ns<'c'?'ok':ns=='c'?'wa':'ko')+'">Nutri-Score '+ns.toUpperCase()+'</span>';
+  if(p.nova_group)h+='<span class="chip '+(p.nova_group<3?'ok':p.nova_group==3?'wa':'ko')+'">NOVA '+p.nova_group+'</span>';
+  if(p.additives_n!=null)h+='<span class="chip '+(p.additives_n==0?'ok':p.additives_n<3?'wa':'ko')+'">'+p.additives_n+' aditivos</span>';
+  if((p.ingredients_analysis_tags||[]).includes('en:palm-oil'))h+='<span class="chip ko">Aceite de palma</span>';
+  const AL={milk:'leche',nuts:'frutos secos',soybeans:'soja',gluten:'gluten',eggs:'huevos',fish:'pescado',peanuts:'cacahuetes',crustaceans:'crustáceos',celery:'apio',mustard:'mostaza','sesame-seeds':'sésamo','sulphur-dioxide-and-sulphites':'sulfitos',lupin:'altramuces',molluscs:'moluscos'};
+  (p.allergens_tags||[]).forEach(a=>{const k=a.replace(/^..:/,'');h+='<span class="chip wa">'+esc(AL[k]||k)+'</span>'});
+  h+='</div>';
+  const n=p.nutriments||{};
+  h+='<p class="small" style="margin-top:8px">Por 100 g: '+['energy-kcal','fat','saturated-fat','sugars','salt','proteins'].map((k,i)=>n[k+'_100g']!=null?['energía','grasa','saturadas','azúcares','sal','proteínas'][i]+' '+r1(n[k+'_100g']):'').filter(Boolean).join(' · ')+'</p>';
+  if(p.ingredients_text)h+='<p class="small">Ingredientes: '+esc(p.ingredients_text)+'</p>';
+  h+=priceBox(p);
+  h+='<div id="alts"></div></div>';
+  $('#out').innerHTML=h;
+}
+
+async function lookup(code){
+  code=String(code).replace(/\D/g,'');
+  if(!code){$('#out').innerHTML='<div class="msg">Escribe el número del código de barras.</div>';return}
+  $('#out').innerHTML='<div class="card small">Buscando…</div>';
+  let p;
+  try{p=await getProduct(code)}catch(e){$('#out').innerHTML='<div class="msg">No he podido conectar con la base de datos. Revisa tu conexión y vuelve a intentarlo.</div>';return}
+  if(!p){$('#out').innerHTML='<div class="card"><div class="msg">No encuentro este código en la base. Puede ser que aún no esté. Mándame una foto de la etiqueta y lo leo yo.</div></div>';return}
+  p.code=p.code||code;
+  const sc=score(p);
+  render(p,sc);
+  if(sc){
+    const hist=st.get('hist',[]).filter(x=>x.code!==p.code);
+    hist.unshift({code:p.code,name:p.product_name||'Sin nombre',brand:(p.brands||'').split(',')[0],stars:sc.stars,total:sc.total,date:new Date().toISOString().slice(0,10)});
+    st.set('hist',hist.slice(0,100));
+    alternatives(p,sc);
+  }
+}
+
+async function alternatives(p,sc){
+  const cats=(p.categories_tags||[]).filter(c=>/^en:[a-z0-9-]+$/.test(c)); if(!cats.length)return;
+  const box=$('#alts'); if(box)box.innerHTML='<p class="small">Comparando con su categoría…</p>';
+  try{
+    let list=[];
+    for(const cat of cats.slice(-4).reverse()){
+      try{
+        const j=await getJSON('https://es.openfoodfacts.org/api/v2/search?categories_tags='+encodeURIComponent(cat)+'&page_size=30&fields='+FIELDS);
+        list=(j.products||[]).filter(x=>x.code!==p.code).map(x=>({p:x,s:score(x)})).filter(x=>x.s&&x.s.parts.length>=2);
+      }catch(e){list=[]}
+      if(list.length>=5)break;
+    }
+    if(list.length<5){if($('#alts'))$('#alts').innerHTML='<p class="small">Pocos productos comparables en esta categoría para decir cómo queda.</p>';return}
+    const better=list.filter(x=>x.s.total<sc.total).length;
+    if(window.cur&&cur.code===p.code)render(p,sc,{better,total:list.length});
+    const top=list.filter(x=>x.s.total>sc.total).sort((a,b)=>b.s.total-a.s.total).slice(0,3);
+    let h='<h3>Alternativas mejores de su categoría</h3>';
+    if(!top.length)h+='<p class="small">Ninguna de las que conozco la supera.</p>';
+    top.forEach(x=>h+='<div class="alt" onclick="lookup(\''+x.p.code+'\')"><div class="nm"><b>'+esc(x.p.product_name||'Sin nombre')+'</b><span class="small">'+esc((x.p.brands||'').split(',')[0])+'</span></div><div class="stars" style="font-size:16px">'+starsHtml(x.s.stars)+'</div></div>');
+    if($('#alts'))$('#alts').innerHTML=h;
+  }catch(e){if($('#alts'))$('#alts').innerHTML='<p class="small">No he podido comparar con su categoría ahora.</p>'}
+}
+
+let qr=null;
+async function startScan(){
+  $('#reader').classList.remove('hide');$('#stop').classList.remove('hide');
+  try{
+    qr=new Html5Qrcode('reader');
+    await qr.start({facingMode:'environment'},{fps:10,qrbox:{width:260,height:140}},async txt=>{await stopScan();$('#code').value=txt;lookup(txt)},()=>{});
+  }catch(e){
+    await stopScan();
+    $('#out').innerHTML='<div class="msg">No puedo abrir la cámara. Comprueba que has dado permiso, o escribe el número a mano.</div>';
+  }
+}
+async function stopScan(){
+  try{if(qr){await qr.stop();qr.clear()}}catch(e){}
+  qr=null;$('#reader').classList.add('hide');$('#stop').classList.add('hide');
+}
+function showHist(){
+  const h=st.get('hist',[]);
+  $('#histbox').innerHTML=h.length?h.map(x=>'<div class="hist" onclick="tab(1);lookup(\''+x.code+'\')"><div class="nm"><b>'+esc(x.name)+'</b><span class="small">'+esc(x.brand)+' · '+esc(x.date)+'</span></div><div class="stars" style="font-size:16px">'+starsHtml(x.stars)+'</div></div>').join(''):'<p class="small" style="margin:0">Aún no has escaneado nada. Lo que escanees aparecerá aquí.</p>';
+}
+function tab(n){
+  $('#v1').classList.toggle('hide',n!==1);$('#v2').classList.toggle('hide',n!==2);
+  $('#t1').classList.toggle('on',n===1);$('#t2').classList.toggle('on',n===2);
+  if(n===2){stopScan();showHist()}
+}
+$('#scan').onclick=startScan;$('#stop').onclick=stopScan;
+$('#go').onclick=()=>lookup($('#code').value);
+$('#code').addEventListener('keydown',e=>{if(e.key==='Enter')lookup($('#code').value)});
+$('#t1').onclick=()=>tab(1);$('#t2').onclick=()=>tab(2);
+</script>
+</body>
+</html>
