@@ -161,23 +161,26 @@ async function getProduct(code){
   return j.status===1?j.product:null;
 }
 
-function priceBox(p){
-  const all=st.get('prices',{}), pr=all[p.code]||{};
+const STORES=[['bm','BM'],['dia','DIA'],['mercadona','Mercadona'],['lidl','Lidl'],['eroski','Eroski'],['otra','Otra']];
+function priceInner(p){
+  const pr=st.get('prices',{})[p.code]||{};
   const q=Number(p.product_quantity)||0;
   const kg=v=>(q&&v)?(v/(q/1000)):null;
-  const bm=kg(pr.bm), dia=kg(pr.dia);
-  const best=(bm&&dia)?(bm<dia?'bm':dia<bm?'dia':''):'';
-  const box=(id,name,val,per)=>'<div class="b '+(best===id?'best':'')+'"><label>'+name+(best===id?' · más barato':'')+'</label><input id="p_'+id+'" inputmode="decimal" placeholder="€" value="'+esc(val||'')+'" onchange="savePrice(\''+p.code+'\')"><div class="small">'+(per?r1(per*100)/100+' €/kg':(q?'':'sin tamaño'))+'</div></div>';
-  return '<h3>Precio</h3><div class="pr">'+box('bm','BM',pr.bm,bm)+box('dia','DIA',pr.dia,dia)+'</div><p class="small">Escribe lo que cuesta en cada tienda. Se guarda en tu móvil.</p>';
+  const per={};STORES.forEach(([id])=>{per[id]=kg(pr[id])});
+  const vals=STORES.filter(([id])=>per[id]);
+  const best=vals.length>1?vals.reduce((m,x)=>per[x[0]]<per[m[0]]?x:m)[0]:'';
+  const box=([id,name])=>'<div class="b '+(best===id?'best':'')+'"><label>'+name+(best===id?' · más barato':'')+'</label><input id="p_'+id+'" inputmode="decimal" placeholder="€" value="'+esc(pr[id]||'')+'" onchange="savePrice(\''+p.code+'\')"><div class="small">'+(per[id]?r1(per[id]*100)/100+' €/kg':(q?'':'sin tamaño'))+'</div></div>';
+  return '<div class="pr">'+STORES.map(box).join('')+'</div><p class="small">Escribe lo que cuesta en cada tienda. Se guarda en tu móvil.</p>';
 }
+function priceBox(p){return '<h3>Precio</h3><div id="pricebox">'+priceInner(p)+'</div>'}
 function savePrice(code){
   const all=st.get('prices',{});
   const f=id=>parseFloat(String(document.getElementById('p_'+id).value).replace(',','.'))||0;
-  all[code]={bm:f('bm'),dia:f('dia')};
+  const o={};STORES.forEach(([id])=>{o[id]=f(id)});
+  all[code]=o;
   st.set('prices',all);
-  if(window.cur&&cur.code===code) render(cur);
+  if(window.cur&&cur.code===code&&$('#pricebox'))$('#pricebox').innerHTML=priceInner(cur);
 }
-
 function render(p,sc,rank){
   window.cur=p; sc=sc||score(p);
   const name=p.product_name||'Sin nombre', br=(p.brands||'').split(',')[0];
